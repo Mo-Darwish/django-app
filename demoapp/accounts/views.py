@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib.auth.models import User
 from .forms import RegisterForm , ResetPasswordForm
+
 
 
 # Create your views here.
@@ -55,6 +56,7 @@ def reset_password_view(request) :
       user = User.objects.get(email=email)
       user.set_password(password)
       user.save()
+      update_session_auth_hash(request, user)
       return redirect('login')
 
   else :
