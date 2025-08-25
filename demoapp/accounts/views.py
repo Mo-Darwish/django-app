@@ -51,14 +51,12 @@ def reset_password_view(request) :
     form = ResetPasswordForm(request.POST)
     if form.is_valid() :
       email = form.cleaned_data.get("email")
-      if User.objects.filter(email=email).exists() :
-        password = form.cleaned_data.get("password")
-        user = User.objects.get(email=email)
-        user.set_password(password)
-        user.save()
-        return redirect('login')
-      else :
-        error = "Email does not exist"
+      password = form.cleaned_data.get("password")
+      user = User.objects.get(email=email)
+      user.set_password(password)
+      user.save()
+      return redirect('login')
+
   else :
       form = ResetPasswordForm()
   return render(request , 'accounts/reset_password.html' , {'form':form , 'error' : error} )

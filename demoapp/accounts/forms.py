@@ -29,7 +29,11 @@ class ResetPasswordForm(forms.ModelForm) :
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
+        email = cleaned_data.get('email')
         # Check if the passwords match
+        if not User.objects.filter(email=email).exists() :
+            raise forms.ValidationError("Email does not exist")
+
         if password and password_confirm and password != password_confirm:
             raise forms.ValidationError("Passwords do not match!")
         return cleaned_data
