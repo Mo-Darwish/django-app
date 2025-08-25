@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib.auth.models import User
-from .forms import RegisterForm
+from .forms import RegisterForm , ResetPasswordForm
 
 
 # Create your views here.
@@ -44,6 +44,22 @@ def logout_view(request):
     else:
         return redirect('home')
 
+def reset_password_view(request) :
+  error = None
+  if request.method == "POST" :
+    # send an email to reset the password
+    form = ResetPasswordForm(request.POST)
+    if form.is_valid() :
+      email = form.cleaned_data.get("email")
+      password = form.cleaned_data.get("password")
+      user = User.objects.get(email=email)
+      user.set_password(password)
+      user.save()
+      return redirect('login')
+
+  else :
+      form = ResetPasswordForm()
+  return render(request , 'accounts/reset_password.html' , {'form':form , 'error' : error} )
 # @login_required
 def home_view(request) :
   return render(request , 'accounts/home.html')
